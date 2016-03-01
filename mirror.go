@@ -46,19 +46,20 @@ func main() {
 	for event := range server.Events {
 		fmt.Println(event.Owner + " " + event.Repo + " " + event.Branch + " " + event.Commit)
 		fullName := fmt.Sprintf("%s/%s", event.Owner, event.Repo)
+		cloneDir := path.Join(*cacheDir, filepath.FromSlash(fullName))
 		gitlabRemote := fmt.Sprintf("git@%s:%s.git", *gitlabHost, fullName)
 		githubRemote := fmt.Sprintf("git@github.com:%s.git", fullName)
 
 		cloneSess := sh.NewSession().SetDir(*cacheDir)
 		cloneSess.ShowCMD = true
-		cloneSess.Command("git", "clone", "--mirror", githubRemote, fullName)
+		cloneSess.Command("git", "clone", "--mirror", githubRemote, cloneDir)
 		err := cloneSess.Run()
 		if err != nil {
 			// totally expected if has been mirroring before
 			fmt.Printf("clone error: %s\n", err.Error())
 		}
 
-		pushSess := sh.NewSession().SetDir(path.Join(*cacheDir, filepath.FromSlash(fullName)))
+		pushSess := sh.NewSession().SetDir(cloneDir)
 		pushSess.ShowCMD = true
 		pushSess.Command("git", "fetch", "--prune")
 		pushSess.Command("git", "push", "--mirror", gitlabRemote)
