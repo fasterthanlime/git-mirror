@@ -41,7 +41,7 @@ func main() {
 		log.Fatal(err.Error())
 	}
 
-	log.Print("Now listening for GitHub hooks on port", server.Port)
+	log.Print("Now listening for GitHub hooks on port ", server.Port)
 
 	for event := range server.Events {
 		fmt.Println(event.Owner + " " + event.Repo + " " + event.Branch + " " + event.Commit)
