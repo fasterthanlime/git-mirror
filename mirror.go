@@ -59,13 +59,20 @@ func main() {
 			fmt.Printf("clone error: %s\n", err.Error())
 		}
 
+		fetchSess := sh.NewSession().SetDir(cloneDir)
+		fetchSess.ShowCMD = true
+		fetchSess.Command("git", "fetch", "--prune")
+		err = fetchSess.Run()
+		if err != nil {
+			fmt.Printf("fetch error: %s\n", err.Error())
+		}
+
 		pushSess := sh.NewSession().SetDir(cloneDir)
 		pushSess.ShowCMD = true
-		pushSess.Command("git", "fetch", "--prune")
 		pushSess.Command("git", "push", "--mirror", gitlabRemote)
 		err = pushSess.Run()
 		if err != nil {
-			fmt.Printf("fetch/push error: %s\n", err.Error())
+			fmt.Printf("push error: %s\n", err.Error())
 		}
 	}
 }
