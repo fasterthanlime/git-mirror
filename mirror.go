@@ -31,6 +31,7 @@ func main() {
 	kingpin.MustParse(app.Parse(os.Args[1:]))
 
 	server := hookserve.NewServer()
+	server.IgnoreTags = false
 	server.Port = *webPort
 	server.Path = *webPath
 	server.Secret = *secret
